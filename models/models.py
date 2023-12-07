@@ -4,24 +4,6 @@ import sklearn.model_selection as model_selection
 import sklearn.metrics as metrics
 
 
-def predict_model(params_rf: dict,
-                  params_gb: dict,
-                  features: List[List[int]],
-                  labels: List[int]):
-    """
-    Get accuracy from random forest and gradient boosting
-
-    :param params_rf: hyperparameters for random forest
-    :param params_gb: hyperparameters for gradient boosting
-    :param features: list of feature vectors
-    :param labels: list of labels
-    :return: accuracy for random forest and gradient boosting
-    """
-    accuracy_rf = _predict_random_forest(params_rf, features, labels)
-    accuracy_gb = _predict_gradboosting(params_gb, features, labels)
-    return accuracy_rf, accuracy_gb
-
-
 def _predict_random_forest(params: dict,
                            features: List[List[int]],
                            labels: List[int]):
