@@ -1,8 +1,11 @@
 import uvicorn
-from fastapi import FastAPI
-from models.models import predict_model
-from models.params import GBParams, TrainingData, RFParams
-
+from fastapi import FastAPI, Query
+from models.params import (GBParams,
+                           TrainingData,
+                           RFParams,
+                           ModelType,
+                           PredictionData)
+from manager.manager import Model
 
 app = FastAPI()
 
@@ -10,7 +13,8 @@ app = FastAPI()
 @app.post("/train_model/")
 async def train_model(params_rf: RFParams,
                       params_gb: GBParams,
-                      data: TrainingData):
+                      data: TrainingData,
+                      model_type: ModelType):
     """
 
     :param params_rf: hyperparameters for random forest
@@ -18,13 +22,43 @@ async def train_model(params_rf: RFParams,
     :param data: labels and features
     :return:
     """
-    accuracy_gb, accuracy_rf = predict_model(
-        params_rf=params_rf.dict(),
-        params_gb=params_gb.dict(),
-        features=data.features,
-        labels=data.labels,
-    )
-    return {'accuracy_random_forest': accuracy_rf, 'accuracy_gradboosting': accuracy_gb}
+    if model_type.model_type == "random forest":
+        model_id = Model.train_model(
+            model_type=model_type.model_type,
+            params=params_rf.dict(),
+            features=data.features,
+            labels=data.labels
+        )
+
+    elif model_type.model_type == "gradient boosting":
+        model_id = Model.train_model(
+            model_type=model_type.model_type,
+            params=params_gb.dict(),
+            features=data.features,
+            labels=data.labels
+        )
+
+    else:
+        return "idi nahui clown"
+
+    return model_id
+
+
+@app.post("/get_models")
+def get_models():
+    return {'models': list(Model.models.keys())}
+
+
+@app.post("/predict")
+def predict(data: PredictionData,
+            model_id: str = Query(...)):
+    return Model.predict(model_id, data.features)
+
+
+@app.delete("/delete_model")
+def delete_model(model_id: str = Query(...)):
+    Model.delete_model(model_id)
+
 
 if __name__ == '__main__':
     uvicorn.run('main:app', port=8080, reload=True)
