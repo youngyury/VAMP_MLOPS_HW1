@@ -39,7 +39,7 @@ async def train_model(params_rf: RFParams,
         )
 
     else:
-        return "idi nahui clown"
+        return "no modelz"
 
     return model_id
 

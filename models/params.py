@@ -26,12 +26,14 @@ class RFParams(BaseModel):
     def n_estimators_positive(cls, n_estimators):
         if n_estimators < 0:
             raise ValueError('n_estimators must be positive')
+
         return n_estimators
 
     @field_validator('max_depth')
     def max_depth_positive(cls, max_depth):
         if max_depth < 0:
             raise ValueError('max_depth must be positive')
+
         return max_depth
 
 
@@ -51,18 +53,21 @@ class GBParams(BaseModel):
     def n_estimators_positive(cls, n_estimators):
         if n_estimators < 0:
             raise ValueError('n_estimators must be positive')
+        
         return n_estimators
 
     @field_validator('max_depth')
     def max_depth_positive(cls, max_depth):
         if max_depth < 0:
             raise ValueError('max_depth must be positive')
+
         return max_depth
 
     @field_validator('learning_rate')
     def learning_rate_positive(cls, learning_rate):
         if learning_rate < 0:
             raise ValueError('learning_rate must be positive')
+
         return learning_rate
 
 
