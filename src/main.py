@@ -1,13 +1,16 @@
 import uvicorn
 from fastapi import FastAPI, Query
-from models.params import (GBParams,
-                           TrainingData,
-                           RFParams,
-                           ModelType,
-                           PredictionData)
-from manager.manager import Model
+from params import (GBParams,
+                        TrainingData,
+                        RFParams,
+                        ModelType,
+                        PredictionData)
+from manager import Model
 
 app = FastAPI()
+endpoint="localhost:9000",
+access_key="minioadmin",
+secret_key="minioadmin"
 
 
 @app.post("/train_model/")
@@ -17,13 +20,15 @@ async def train_model(params_rf: RFParams,
                       model_type: ModelType):
     """
 
+    :param model_type: name of  model
     :param params_rf: hyperparameters for random forest
     :param params_gb: hyperparameters for gradient boosting
     :param data: labels and features
-    :return:
+    :return: model id
     """
+    model = Model(endpoint, access_key, secret_key)
     if model_type.model_type == "random forest":
-        model_id = Model.train_model(
+        model_id = model.train_model(
             model_type=model_type.model_type,
             params=params_rf.dict(),
             features=data.features,
@@ -31,7 +36,7 @@ async def train_model(params_rf: RFParams,
         )
 
     elif model_type.model_type == "gradient boosting":
-        model_id = Model.train_model(
+        model_id = model.train_model(
             model_type=model_type.model_type,
             params=params_gb.dict(),
             features=data.features,
@@ -46,7 +51,7 @@ async def train_model(params_rf: RFParams,
 
 @app.post("/get_models")
 def get_models():
-    return {'models': list(Model.models.keys())}
+    return {'src': list(Model.models.keys())}
 
 
 @app.post("/predict")

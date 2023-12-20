@@ -72,8 +72,14 @@ class GBParams(BaseModel):
 
 
 class ModelType(BaseModel):
+    """
+    Schema for model type
+    """
     model_type: Optional[str]
 
 
 class PredictionData(BaseModel):
+    """
+    Schema for prediction data
+    """
     features: List[List[float]]
