@@ -4,7 +4,8 @@ from typing import Union, Dict, List
 import boto3
 import joblib
 from io import BytesIO
-from dvc_data import DVC
+from .dvc_data import DVC
+
 
 ModelsUnion = Union[RandomForestClassifier, GradientBoostingClassifier]
 minio_endpoint = 'http://localhost:9000'
@@ -61,7 +62,6 @@ class Model:
             f.seek(0)
             minio_client.upload_fileobj(Bucket=minio_bucket_name, Key=object_name, Fileobj=f)
 
-        # minio_client.upload_file(local_model_path, minio_bucket_name, object_name)
         return model_type
 
     @staticmethod
@@ -82,8 +82,6 @@ class Model:
 
         loaded_model = joblib.load(local_model_path)
         prediction = loaded_model.predict(features)
-        # model = Model.src[model_type]
-        # prediction = model.predict(features)
         return prediction.tolist()
 
     @staticmethod
@@ -95,7 +93,6 @@ class Model:
         """
         object_name = f'{model_id}.joblib'
         if Model.models[model_id]:
-            # del Model.src[model_id]
             minio_client.delete_object(Bucket=minio_bucket_name, Key=object_name)
         else:
             return "Error"
